@@ -1,0 +1,93 @@
+
+# "Vagrant.configure("2") do |config|" måste vara högst upp
+
+#IP på alla host:s måste vara 192.168.56.101-254 för att rätt Host-Only-ethernet adapter ska
+#användas. Det är den som är "enable" i virtualbox
+nodes = [
+  { :hostname => 'appserver',   :ip => '192.168.56.101', :box => 'bento/ubuntu-18.04' },
+  { :hostname => 'dbserver',    :ip => '192.168.56.102', :box => 'bento/ubuntu-18.04' },
+  { :hostname => 'web',         :ip => '192.168.56.103', :box => 'bento/ubuntu-18.04' },
+  { :hostname => 'tst0',        :ip => '192.168.56.104', :box => 'bento/ubuntu-18.04' },
+  { :hostname => 'tst1',        :ip => '192.168.56.105', :box => 'bento/ubuntu-18.04' },
+  { :hostname => 'tst2',        :ip => '192.168.56.106', :box => 'bento/ubuntu-18.04' },
+]
+
+
+Vagrant.configure("2") do |config|
+
+
+####### Install Puppet Agent #######
+#  config.vm.provision "shell",  inline: <<-SHELL
+#       wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+#       dpkg -i puppet6-release-bionic.deb
+#       apt-get -qq update
+#       apt-get install -y puppetserver
+#  SHELL
+
+
+  config.vm.define "proxyserver" do |proxyserver|
+       proxyserver.vm.box = "bento/ubuntu-18.04"
+       proxyserver.vm.hostname = "proxyserver"
+       proxyserver.vm.network :private_network, ip: "192.168.56.107"
+
+
+       proxyserver.vm.provision "shell", inline: <<-SHELL
+         wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+         dpkg -i puppet6-release-bionic.deb
+         apt-get -qq update
+         apt-get install -y puppetserver
+       SHELL
+
+       proxyserver.vm.provision :puppet do |puppet|
+         puppet.module_path = "./environments"
+         puppet.manifests_path = "./environments/test/manifests"
+         puppet.options = "--verbose --debug"
+       end
+    end
+
+  config.vm.define "tst3" do |tst3|
+       tst3.vm.box = "bento/ubuntu-18.04"
+       tst3.vm.hostname = "tst3"
+       tst3.vm.network :private_network, ip: "192.168.56.108"
+
+       tst3.vm.provision "shell", inline: <<-SHELL
+         wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+         dpkg -i puppet6-release-bionic.deb
+         apt-get -qq update
+         apt-get install -y puppet-agent
+       SHELL
+
+       tst3.vm.provision :puppet do |puppet|
+         puppet.module_path= "./environments"
+         puppet.manifests_path = "./environments/test/manifests"
+       end
+
+    end
+config.vm.define "nodes" do |nodes|
+  nodes.each do |node|
+    config.vm.define node[:hostname] do |nodeconfig|
+       nodeconfig.vm.box = "bento/ubuntu-18.04"
+       nodeconfig.vm.hostname = node[:hostname]
+       nodeconfig.vm.network :private_network, ip: node[:ip]
+     end
+    end
+  end
+
+
+  ####### Provision #######
+#  config.vm.provision "puppet" do |puppet|
+#    puppet.module_path = "./environments"
+#    puppet.manifests_path = "./environments/test/manifests"
+#    puppet.options = "--verbose --debug"
+#    puppet.manifest_file = "default.pp"
+#  end
+
+#  config.vm.provision "shell",  inline: <<-SHELL
+#    puppet module install puppetlabs-ntp
+#    cd /etc/puppetlabs/code/environments/production/manifests/
+#    echo node default { class { 'ntp': ensure => running, servers => ['nist-time-server.eoni.com','nist1-lv.ustiming.org','ntp-nist.ldsbc.edu'] } }
+
+#  SHELL
+
+
+end
