@@ -14,10 +14,12 @@ node appserver {
 
 }
 node dbserver {
-  class { 'server_config':
-    package_name => 'mysql-server',
-    service_name => 'apache2',
-  }
+
+include mysql
+# class { 'mysql::mysql':
+#    package_name => 'mysql-server',
+#    service_name => 'apache2',
+#  }
 }
 
 node web {
