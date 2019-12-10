@@ -84,7 +84,17 @@ Vagrant.configure("2") do |config|
          puppet.manifests_path = "./environments/test/manifests"
        end
 
+
+       if node[:hostname] == 'web' then
+         nodeconfig.vm.provision "shell", path: "./setupNginx.sh"
+       end
+
+       if node[:hostname] == 'dbserver' then
+         nodeconfig.vm.provision "shell", path: "./installMySQL.sh"
+       end
+
     end
+
   end
 
 
@@ -105,4 +115,3 @@ Vagrant.configure("2") do |config|
 
 
 end
-
