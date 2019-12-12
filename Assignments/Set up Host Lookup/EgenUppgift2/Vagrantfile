@@ -64,6 +64,8 @@ Vagrant.configure("2") do |config|
          puppet.manifests_path = "./environments/test/manifests"
        end
 
+       tst3.vm.provision "shell", path: "./setupCommunication.sh"
+
     end
 
   nodes.each do |node|
@@ -92,6 +94,8 @@ Vagrant.configure("2") do |config|
        if node[:hostname] == 'dbserver' then
          nodeconfig.vm.provision "shell", path: "./installMySQL.sh"
        end
+
+       nodeconfig.vm.provision "shell", path: "./setupCommunication.sh"
 
     end
 

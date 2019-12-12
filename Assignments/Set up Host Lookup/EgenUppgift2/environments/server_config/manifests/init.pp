@@ -25,10 +25,27 @@ class server_config (
 	  ensure => installed,
   }
 
+#  exec { 'coreutilsForCat':
+#	command => '/usr/bin/apt-get install coreutils',
+#	require => Exec['apt-update'],
+#       }
+
+#  exec { 'getIpAddresses':
+#	require => Exec['coreutilsForCat'],
+#        command => '/usr/bin/cat /vagrant/ipHosts.txt | sudo tee -a /etc/hosts'
+#      }
+
+#  exec { 'setUserPassword':
+#	command => '/usr/bin/sudo passwd root',
+#	require => Exec['apt-update'],
+#       }
+
 #  package { 'awk':
 #          require => Exec['apt-update'],
 #	  ensure => installed,
 #  }
+
+
 
   if $package_name == 'nodejs' {
 
@@ -73,5 +90,11 @@ class server_config (
 #    ensure => running,
 #    enable => true,
 #  }
+
+# file { 'etc/hosts':
+#	ensure => present,
+#	source => 'puppet://environments/server_config/ipHosts',
+#	path => '/etc/hosts'
+#	}
 
 }
