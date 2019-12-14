@@ -1,9 +1,0 @@
-# Private Network Servers
-192.168.56.101 appserver
-192.168.56.102 dbserver
-192.168.56.103 web
-192.168.56.104 tst0
-192.168.56.105 tst1
-192.168.56.106 tst2
-192.168.56.107 proxyserver
-#End of Private Network Servers
