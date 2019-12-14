@@ -91,9 +91,10 @@ class server_config (
 #    enable => true,
 #  }
 
-# file { 'etc/hosts':
-#	ensure => present,
+#FRÅGA
+# file { '/etc/hosts':
 #	source => 'puppet://environments/server_config/ipHosts',
+#	source => '/vagrant/ipHosts',
 #	path => '/etc/hosts'
 #	}
 

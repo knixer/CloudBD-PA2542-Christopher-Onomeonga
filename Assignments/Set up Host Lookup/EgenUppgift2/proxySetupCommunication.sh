@@ -1,5 +1,5 @@
 #!/bin/sh
-cat /vagrant/ipHosts.txt | sudo tee -a /etc/hosts
+cat /vagrant/proxyGetIP | sudo tee -a /etc/hosts
 sudo apt -y install expect
 
 USER="vagrant"
